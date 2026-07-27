@@ -6,6 +6,7 @@
 γ	gamma
 Δ	delta
 δ	delta
+∆	delta
 Ε	epsilon
 ε	epsilon
 Ζ	zeta
@@ -50,3 +51,6 @@
 ῖ	I
 ύ	Y
 €	Euro
+ℝ	R
+ℚ	Q
+ℕ	N

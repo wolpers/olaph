@@ -594,7 +594,7 @@ class Olaph:
                 if word_sources is not None:
                     word_sources[raw] = "refused"
             except Exception as ex:
-                logging.error(f"Could not phonemize '{raw}': {ex}")
+                logging.error(f"Could not phonemize '{raw}': {ex}  '{sentence}'")
                 self.failed_words.append(raw)
                 tokens.append(raw)
                 if word_sources is not None:
@@ -646,7 +646,7 @@ class Olaph:
             final_text = final_text.translate(str.maketrans("", "", string.punctuation))
         else:
             final_text = re.sub(r"\s+([,.!?;:])", r"\1", final_text)
-            if not re.search(r"[.!?]\s*$", final_text):
+            if not re.search(r"[.!?;:,]\s*$", final_text):
                 final_text += "."
 
         final_text = unicodedata.normalize("NFC", final_text)
@@ -655,3 +655,25 @@ class Olaph:
         if return_word_info:
             return final_text, word_sources
         return final_text
+
+    def normalize_text(self, text: str, lang: str = "de"):
+        """
+        Similiar to phonemize_text, but only normalizes the text and leaves punctuation intact.
+        Handles sentence segmentation, abbreviation resolution, normalization,
+        and punctuation spacing.
+        """
+        nlp = self._get_nlp(lang)
+        sentences = [s.text for s in nlp(text).sents]
+        results = []
+
+        for sentence in sentences:
+            assert "#" not in sentence, f"Sentence contains '#' character: {sentence}"
+            sentence = re.sub(r"'", "#", sentence)
+            processed = self._preprocess_sentence(sentence, lang)
+            processed = re.sub(r"#", "'", processed)
+            results.append(processed)
+
+        final_text = " ".join(results).strip()
+        final_text = final_text.strip()
+        return final_text
+

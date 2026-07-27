@@ -129,3 +129,4 @@ u.	und
 o.	oder
 $	Dollar
 €	Euro
+£	Pfund
